@@ -14,7 +14,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Update stage 0 document
+      - name: Download exact Drive document
         shell: bash
         env:
-          SECTION_B64: CgotLS0KCiMgMC42IExvYWRlcjrvvJpFeGVjdXRhYmxlIOWmguS9leWPmOaIkCBQcm9jZXNzCgojIyDkuIDjgIHnu4/lhbjpnaLor5XpopgKCj4g5Y+M5Ye75LiA5LiqIGAuZXhlYO+8jOS7juijgeebmOS4iueahOWPr+aJp+ihjOaWh+S7tuWIsOeoi+W6j+ecn+aUt+i/kOihjO+8jOS4remXtOWPkeeUn+S6huS7gOS5iO+8nwoKIyMjIDMwIOenkOWbnuetlAoK5Y+v5omn6KGM5paH5Lu26aaW5YWI5Y+q5piv56OB55uY5LiK55qE57uT5p6E5YyW5LqM6L+b5Yi25paH5Lu244CC5pON5L2c57O757uf5Yib5bu66L+b56iL5ZCO77yM55SxIExvYWRlciDmoLnmja4gZXhlY3V0YWJsZSDkuK3nmoTnqIvluo/lpLTjgIFTZWN0aW9uL1NlZ21lbnQg562J5L+h5oGv5bu656uL6L+b56iL6Jma5ouf5Zyw5Z2A56m66Ze077yM5oqK5Luj56CB44CB5Y+q6K+75pWw5o2u44CB5Y+v5YaZ5pWw5o2u5Lul5Y+K5Yqo5oCB5bqT562J5pig5bCE5Yiw55u45bqU6Jma5ouf5Zyw5Z2A6IyD5Zu077yM5bm25bu656uL5qCI562J6L+Q6KGM546v5aKD44CC5a+55LqOIGAuYnNzYCDov5nnsbvpm7bliJ3lp4vljJbljLrln5/vvIzlj6/ku6Xlj6rlu7rnq4vpm7blhYXloavnmoTokoHmi5/lhoXlrZjogIzkuI3pnIDopoHku47mlofku7bpmIXlj5blr7nlupTlrZfoioLjgILliqjmgIHpk77mjqXlmajov5jkvJrlpITnkIbliqjmgIHlupPlir3ovb3lkozlv4XopoHnmoTph43lrprkvY3jgIHnrKblj7fnu5HlrprjgILlh4blpIflrozmiJDlkI7vvIxDUFUg5LuOIGV4ZWN1dGFibGUg5oyH5a6a55qEIGVudHJ5IHBvaW50IOW8gOWni+aJp+ihjO+8jOmajuWQjiBSdW50aW1lIOWIneWni+WMlu+8jOacgOe7iOaJjei/m+WFpSBgbWFpbigpYOOAggpgYGB0ZXh0CkV4ZWN1dGFibGUKICAgIOKGkwpDcmVhdGUgUHJvY2VzcwogICAg4oaTCkZpcnR1YWwgQWRkcmVzcyBTcGFjZQogICAg4oaTCk1hcCBDb2RlIC8gRGF0YSAvIExpYnJhcmllcwogICAg4oaTCkN0YWNrICsgUnVudGltZSBFbnZpcm9ubWVudAogICAg4oaTCkVudHJ5IFBvaW50CiAgICDihpMKUnVudGltZSBJbml0aWFsaXphdGlvbgogICAg4oaTCm1haW4oKQpgYGAKCuaYr+S6p+acgOmHjeimgeeahOiuuOivhuS4muS6hu+8mgoKPiAqKkV4ZWN1dGFibGUg5piv5paH5Lu277ybIFByb2Nlc3Mg5piv6L+Q6KGM5Lit55qE5omn6KGM546v5aKD44CCKioKCuiuhemAieS4jeaYr+WQjOS4gOS4quS4nOilv+OAggoKLS0tCgojIyDkuozjgIFgcHJvZ3JhbS5leGVgIOWIsOW6leaYr+S7gOS5iO+8nwoK5YmN6Z2iIExpbmtlciDmnIDnu4jlvpfliLDvvJoKCmBgYHRleHQKcHJvZ3JhbS5leGUKYGBgCgrmraTml7blroPlnKjnobHnm5jkuIrmnKzotKjov5jmmK/kuIDkuKrnu5PmnoTljJbnmoTkuozov5vliLbmloc=__TRUNCATED__
+          DOWNLOAD_URL: 'https://sdmntprkoreacentral.oaiusercontent.com/files/00000000-8078-8206-85ce-cc242a3aef9d/raw?se=2026-10-26T08%3A13%3A16Z&sp=r&sv=2026-02-06&sr=b&scid=c1bcd7f4-0553-5471-a6e4-396401a644d2&skoid=1e4bb9ed-6bb5-424a-a3aa-79f21566e722&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-26T02%3A01%3A27Z&ske=2026-10-27T02%3A01%3A27Z&sks=b&skv=2026-02-06&sig=36rBwmveJrS%2Blj5Bx%2BDoPZMujC0ABEBE/wKcrBpnqR0%3D'
+          TARGET_SHA: '4de41299a952564a6021e8e9f9312e70071c3fb4'
+        run: |
+          curl -L --fail --retry 2 "$DOWNLOAD_URL" -o "00-从源码到可执行程序.md"
+          actual="$(git hash-object "00-从源码到可执行程序.md")"
+          echo "target: $TARGET_SHA"
+          echo "actual: $actual"
+          test "$actual" = "$TARGET_SHA"
+
+      - name: Commit synchronized document
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm .github/workflows/one-shot-stage06-sync.yml
+          git add "00-从源码到可执行程序.md" .github/workflows/one-shot-stage06-sync.yml
+          git commit -m "docs: add stage 0.6 loader and virtual address space"
+          git push
